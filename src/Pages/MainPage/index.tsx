@@ -1,21 +1,16 @@
 // App.tsx
-import React, { useState, useEffect } from 'react';
-import '../../output.css';
-import { Button, TextInput, SelectInput, Spacer, FormInput } from '../../Components'
-
-interface TodoItem {
-    id: string;
-    text: string;
-    type: string;
-}
+import React, { useEffect, useState } from 'react';
+import { ListItems, Spacer } from '../../Components';
+import { BSugarItem } from '../../Type/bsugar';
+import BloodSugarForm from './form';
 
 const MainPage: React.FC = () => {
-    const [items, setItems] = useState<TodoItem[]>([]);
+    const [items, setItems] = useState<BSugarItem[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
     const [typeValue, setTypeValue] = useState<string>('Random');
 
     useEffect(() => {
-        const storedItems = JSON.parse(localStorage.getItem('items') || '[]') as TodoItem[];
+        const storedItems = JSON.parse(localStorage.getItem('items') || '[]') as BSugarItem[];
         setItems(storedItems);
     }, []);
 
@@ -23,15 +18,9 @@ const MainPage: React.FC = () => {
         e.preventDefault();
         if (inputValue.trim() !== '') {
             const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const day = now.getDate().toString().padStart(2, '0');
-            const hour = now.getHours().toString().padStart(2, '0');
-            const minute = now.getMinutes().toString().padStart(2, '0');
-            const second = now.getSeconds().toString().padStart(2, '0');
-            const newItem: TodoItem = {
-                id: `${year}-${month}-${day} ${hour}:${minute}:${second}`, // Format: YYYY-MM-DD HH:MM:SS
-                text: inputValue.trim(),
+            const newItem: BSugarItem = {
+                id: `${now}`,
+                value: inputValue.trim(),
                 type: typeValue.trim()
             };
             setItems([...items, newItem]);
@@ -54,7 +43,7 @@ const MainPage: React.FC = () => {
     }
 
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto" style={{overflow: 'hidden'}}>
             <div className="flex items-center justify-center pt-6">
                 <div className="flex-none w-96 p-0">
                     <div className="flex flex-col items-center justify-center p-0">
@@ -67,46 +56,20 @@ const MainPage: React.FC = () => {
                         <Spacer
                             size={20}
                         />
-                        <FormInput
+                        <BloodSugarForm
                             onSubmit={handleSubmit}
-                        >
-                            <SelectInput
-                                label="Select Type Check"
-                                options={['Random', '2 Hours After Meal', 'After Fasting']}
-                                onChange={handleTypeChange}
-                            />
-                            <Spacer
-                                size={12}
-                            />
-                            <TextInput
-                                placeholder='100'
-                                type='number'
-                                badge='mg/dL'
-                                label='Input your blood sugar'
-                                value={inputValue}
-                                onChange={(e) => handleInputChange(e.target.value)}
-                            />
-                            <Button
-                                type='submit'
-                            >
-                                Add
-                            </Button>
-                        </FormInput>
+                            handleTypeChange={handleTypeChange}
+                            handleInputChange={handleInputChange}
+                            inputValue={inputValue}
+                        />
 
                         <Spacer
-                            size={16}
+                            size={20}
                         />
-                        <ul>
-                            {items.map((item) => (
-                                <li key={item.id}>
-                                    {item.text}
-                                    <button onClick={() => handleDelete(item.id)}>Delete</button>
-                                    <Spacer
-                                        size={12}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
+                        <ListItems
+                            data={items}
+                            handleDelete={handleDelete}
+                        />
                     </div>
                 </div>
             </div>
