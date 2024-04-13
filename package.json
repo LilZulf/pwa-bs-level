@@ -1,6 +1,7 @@
 {
   "name": "pwa-bs-level",
   "version": "0.1.1",
+  "homepage": "https://bs-tracker.kolektifhost.com/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
